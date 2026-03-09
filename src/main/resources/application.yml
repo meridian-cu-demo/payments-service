@@ -1,0 +1,11 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: payments-service
+
+accounts:
+  base-url: http://localhost:8081
+notifications:
+  base-url: http://localhost:8083

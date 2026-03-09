@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17', cache: maven }
+      - name: Build banking-commons v1.2.0 (ADR-0002 — source build pinned to tag)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/banking-commons
+          ref: v1.2.0
+          path: .banking-commons
+      - run: mvn -B install -DskipTests -f .banking-commons/pom.xml
+      - run: mvn -B verify
