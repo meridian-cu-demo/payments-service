@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import example.meridian.payments.gateway.AccountsGateway;
+import example.meridian.payments.gateway.NotificationsGateway;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ class TransfersControllerTest {
 
   @Autowired private MockMvc mvc;
   @MockBean private AccountsGateway accounts;
+  @MockBean private NotificationsGateway notifications;
 
   private void accountWithBalance(long cents) {
     when(accounts.account(anyString()))
@@ -44,6 +46,7 @@ class TransfersControllerTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("POSTED"))
         .andExpect(jsonPath("$.dailyLimitRemaining.amount").value("2750.00"));
+    org.mockito.Mockito.verify(notifications).transferPosted(org.mockito.ArgumentMatchers.eq("mem-1001"), anyString());
   }
 
   @Test

@@ -2,6 +2,7 @@ package example.meridian.payments.api;
 
 import example.meridian.commons.error.ApiException;
 import example.meridian.payments.gateway.AccountsGateway;
+import example.meridian.payments.gateway.NotificationsGateway;
 import example.meridian.payments.limits.TransferLimits;
 import example.meridian.payments.model.BillPayment;
 import example.meridian.payments.model.Transfer;
@@ -29,10 +30,12 @@ public class TransfersController {
 
   private final InMemoryTransferStore store;
   private final AccountsGateway accounts;
+  private final NotificationsGateway notifications;
 
-  public TransfersController(InMemoryTransferStore store, AccountsGateway accounts) {
+  public TransfersController(InMemoryTransferStore store, AccountsGateway accounts, NotificationsGateway notifications) {
     this.store = store;
     this.accounts = accounts;
+    this.notifications = notifications;
   }
 
   record MoneyBody(String amount, String currency) {
@@ -79,6 +82,7 @@ public class TransfersController {
                 amountCents,
                 now,
                 TransferStatus.POSTED));
+    notifications.transferPosted(memberId, transfer.transferId());
     return transferBody(transfer, usedToday + amountCents);
   }
 
